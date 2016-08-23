@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ChineseRecipes</string>
+    <string name="menu1_name">beef</string>
+    <string name="menu1_content">"a lot of beef"</string>
+</resources>
