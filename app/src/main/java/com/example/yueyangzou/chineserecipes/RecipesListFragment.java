@@ -1,15 +1,21 @@
 package com.example.yueyangzou.chineserecipes;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,74 +26,140 @@ public class RecipesListFragment extends Fragment {
     private RecyclerView mMenuRecyclerView;
     private MenuAdapter mAdapter;
 
+    private CharSequence flavors[] = new CharSequence[]{"All", "Spicy", "Savory", "Crispy", "Sweet"};
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipes_list, container, false);
         mMenuRecyclerView = (RecyclerView) view.findViewById(R.id.menu_recycler_view);
         mMenuRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        updateUI();
+        updateUI("All");
 
         return view;
     }
 
-    private void updateUI() {
+    private void updateUI(String flaCode) {
         MenuLab menuLab  = MenuLab.get(getActivity());
-        List<Menu> menus = menuLab.getMenus();
+        List<MenuRecipe> menuRecipes = new ArrayList<>();
+        if (flaCode.equals("All")) {
+            menuRecipes = menuLab.getMenuRecipes();
+        }
+        else {
+            menuRecipes = menuLab.getMenuRecipesByFlavor(flaCode);
+        }
 
-        mAdapter = new MenuAdapter(menus);
+
+        mAdapter = new MenuAdapter(menuRecipes);
         mMenuRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_recipes_list, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_selection :
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Choose one flavor");
+                builder.setItems(flavors, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        switch (which) {
+                            case 0 :
+                                updateUI("All");
+                                break;
+                            case 1 :
+                                updateUI("Spicy");
+                                //choose spicy ones. and then sort.
+                                //updateUI();
+                                break;
+                            case 2 :
+                                updateUI("Savory");
+                                // choose savory ones, and then sort.
+                                break;
+                            case 3 :
+                                updateUI("Crispy");
+                                // crispy.
+                                break;
+                            case 4 :
+                                // sweet'
+                                updateUI("Sweet");
+                                break;
+                            default:break;
+                        }
+                    }
+                });
+                builder.show();
+
+                return true;
+            default:return super.onOptionsItemSelected(item);
+        }
     }
 
 
 
-
     private class MenuHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView mTitleTextView;
-        private Menu mMenu;
+        private TextView mTitleTextView;
+        private TextView mFlavorTextView;
+        private MenuRecipe mMenuRecipe;
         //public TextView mContentTextView;
 
         public MenuHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
-            mTitleTextView = (TextView)itemView;
+            mTitleTextView = (TextView)itemView.findViewById(R.id.list_item_menu_title_text_view);
+            mFlavorTextView = (TextView)itemView.findViewById(R.id.list_item_menu_flavor_text_view);
         }
-        public void bindMenu(Menu menu) {
-            mMenu = menu;
+        public void bindMenu(MenuRecipe menuRecipe) {
+            mMenuRecipe = menuRecipe;
+            mTitleTextView.setText(menuRecipe.getName());
+            mFlavorTextView.setText(menuRecipe.getShort());
         }
 
         @Override
         public void onClick(View v) {
-            Intent intent = MenuPagerActivity.newIntent(getActivity(), mMenu.getId());
+            Intent intent = MenuPagerActivity.newIntent(getActivity(), mMenuRecipe.getId());
             startActivity(intent);
         }
-
 
     }
 
     private class MenuAdapter extends RecyclerView.Adapter<MenuHolder> {
-        private List<Menu> mMenuList;
+        private List<MenuRecipe> mMenuRecipeList;
 
         @Override
         public MenuHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            View view = layoutInflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            View view = layoutInflater.inflate(R.layout.list_item_menu, parent, false);
             return new MenuHolder(view);
         }
 
-        public MenuAdapter(List<Menu> menuList) {
-            mMenuList = menuList;
+        public MenuAdapter(List<MenuRecipe> menuRecipeList) {
+            mMenuRecipeList = menuRecipeList;
         }
 
         @Override
         public void onBindViewHolder(MenuHolder holder, int position) {
-            Menu menu = mMenuList.get(position);
-            holder.bindMenu(menu);
-            holder.mTitleTextView.setText(menu.getName());
+            MenuRecipe menuRecipe = mMenuRecipeList.get(position);
+            holder.bindMenu(menuRecipe);
 
         }
         @Override
         public int getItemCount() {
-            return mMenuList.size();
+            return mMenuRecipeList.size();
         }
     }
 

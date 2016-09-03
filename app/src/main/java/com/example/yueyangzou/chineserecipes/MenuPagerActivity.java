@@ -18,7 +18,7 @@ import java.util.UUID;
 public class MenuPagerActivity extends FragmentActivity {
     private static final String EXTRA_MENU_ID = "com.example.yueyangzou.android.chineserecipe.menu_id";
     private ViewPager mViewPager;
-    private List<Menu> mMenuList;
+    private List<MenuRecipe> mMenuRecipeList;
 
     public static Intent newIntent(Context packageContext, UUID menuId) {
         Intent intent = new Intent(packageContext, MenuPagerActivity.class);
@@ -33,31 +33,26 @@ public class MenuPagerActivity extends FragmentActivity {
         UUID menuId = (UUID) getIntent().getSerializableExtra(EXTRA_MENU_ID);
 
         mViewPager = (ViewPager) findViewById(R.id.activity_menu_pager_view_pager);
-        mMenuList = MenuLab.get(this).getMenus();
+        mMenuRecipeList = MenuLab.get(this).getMenuRecipes();
         FragmentManager fragmentManager = getSupportFragmentManager();
         mViewPager.setAdapter(new FragmentPagerAdapter(fragmentManager) {
             @Override
             public Fragment getItem(int position) {
-                Menu menu = mMenuList.get(position);
-                return ChineseRecipesFragment.newInstance(menu.getId());
+                MenuRecipe menuRecipe = mMenuRecipeList.get(position);
+                return ChineseRecipesFragment.newInstance(menuRecipe.getId());
             }
 
             @Override
             public int getCount() {
-                return mMenuList.size();
+                return mMenuRecipeList.size();
             }
         });
-        for (int i = 0; i < mMenuList.size(); i++) {
-            if (mMenuList.get(i).getId().equals(menuId)) {
+        for (int i = 0; i < mMenuRecipeList.size(); i++) {
+            if (mMenuRecipeList.get(i).getId().equals(menuId)) {
                 mViewPager.setCurrentItem(i);
                 break;
             }
         }
-
-
-
-
-
     }
 
 }
