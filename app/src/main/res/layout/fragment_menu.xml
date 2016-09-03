@@ -3,23 +3,44 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+    <Button
+        android:layout_width="96dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/web_search_button"
+        android:text="@string/web_search_button_name"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/fragment_menu_title"
-        android:layout_gravity="center_horizontal"
-        android:textStyle="bold"/>
+        android:paddingTop="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"
+        android:textSize="22dp"/>
+
     <ScrollView
         android:layout_below="@id/fragment_menu_title"
         android:layout_width="match_parent"
+        android:layout_above="@id/web_search_button"
         android:layout_height="wrap_content"
         android:id="@+id/fragment_menu_scrollview">
         
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/fragment_menu_content"/>
+            android:id="@+id/fragment_menu_content"
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp"
+            android:textSize="18dp"
+            />
         </ScrollView>
+
 
 
 

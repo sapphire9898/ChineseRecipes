@@ -2,4 +2,8 @@
     <string name="app_name">ChineseRecipes</string>
     <string name="menu1_name">beef</string>
     <string name="menu1_content">"a lot of beef"</string>
+    <string name="web_search_button_name">Search</string>
+    <string name="Go_search">Search</string>
+    <string name="sort_food">Sort Food</string>
+
 </resources>

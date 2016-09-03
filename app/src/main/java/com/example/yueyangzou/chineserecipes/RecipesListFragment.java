@@ -13,7 +13,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.TextView;
+import android.support.v7.widget.SearchView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,21 +42,26 @@ public class RecipesListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recipes_list, container, false);
         mMenuRecyclerView = (RecyclerView) view.findViewById(R.id.menu_recycler_view);
         mMenuRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        updateUI("All");
+        updateUI("All", true);
 
         return view;
     }
 
-    private void updateUI(String flaCode) {
+    private void updateUI(String flaCode, boolean flavor) {
         MenuLab menuLab  = MenuLab.get(getActivity());
         List<MenuRecipe> menuRecipes = new ArrayList<>();
-        if (flaCode.equals("All")) {
-            menuRecipes = menuLab.getMenuRecipes();
+
+        if (flavor) {
+            if (flaCode.equals("All")) {
+                menuRecipes = menuLab.getMenuRecipes();
+            }
+            else {
+                menuRecipes = menuLab.getMenuRecipesByFlavor(flaCode, true);
+            }
         }
         else {
-            menuRecipes = menuLab.getMenuRecipesByFlavor(flaCode);
+            menuRecipes = menuLab.getMenuRecipesByFlavor(flaCode, false);
         }
-
 
         mAdapter = new MenuAdapter(menuRecipes);
         mMenuRecyclerView.setAdapter(mAdapter);
@@ -64,6 +71,28 @@ public class RecipesListFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_recipes_list, menu);
+
+
+        MenuItem searchItem = menu.findItem(R.id.menu_item_search);
+
+        final SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //update items according to the string.
+                // the name should include the query. (strStr.)
+                updateUI(query, false);
+                return true;
+            }
+
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                updateUI(newText, false);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -79,24 +108,24 @@ public class RecipesListFragment extends Fragment {
 
                         switch (which) {
                             case 0 :
-                                updateUI("All");
+                                updateUI("All", true);
                                 break;
                             case 1 :
-                                updateUI("Spicy");
+                                updateUI("Spicy", true);
                                 //choose spicy ones. and then sort.
                                 //updateUI();
                                 break;
                             case 2 :
-                                updateUI("Savory");
+                                updateUI("Savory", true);
                                 // choose savory ones, and then sort.
                                 break;
                             case 3 :
-                                updateUI("Crispy");
+                                updateUI("Crispy",true);
                                 // crispy.
                                 break;
                             case 4 :
                                 // sweet'
-                                updateUI("Sweet");
+                                updateUI("Sweet",true);
                                 break;
                             default:break;
                         }

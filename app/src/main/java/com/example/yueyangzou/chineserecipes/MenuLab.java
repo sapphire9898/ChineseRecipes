@@ -79,24 +79,26 @@ public class MenuLab {
         return null;
     }
 
-    public List<MenuRecipe> getMenuRecipesByFlavor(String flaCode) {
+    public List<MenuRecipe> getMenuRecipesByFlavor(String flaCode, boolean flavor) {
         List<MenuRecipe> list = new ArrayList<>();
-        for (MenuRecipe menuRecipe : getMenuRecipes()) {
-            if (menuRecipe.getShort().equals(flaCode)) {
-                list.add(menuRecipe);
+
+        if (flavor) {
+            for (MenuRecipe menuRecipe : getMenuRecipes()) {
+                if (menuRecipe.getShort().equals(flaCode)) {
+                    list.add(menuRecipe);
+                }
+            }
+        }
+        else {
+            // according to the name select the name.
+            for (MenuRecipe menuRecipe : getMenuRecipes()) {
+                if (menuRecipe.getName().toLowerCase().contains(flaCode.toLowerCase())) {
+                    list.add(menuRecipe);
+                }
             }
         }
         Collections.sort(list, new RecipesComparator());
         return list;
     }
-
-
-
-
-
-
-
-
-
 
 }
